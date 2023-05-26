@@ -78,10 +78,12 @@ const Category = () => {
 
     return (
         <div className="catalog-management-item">
-            <Heading title="Tất cả danh mục" />
-            <div className='create-btn-container'>
-                <button className='btn btn-dark btn-sm' onClick={handleCreateCategoryLevel1}>Tạo danh mục</button>
+            <div className="to-add-product-page">
+                <button onClick={handleCreateCategoryLevel1} className="to-add-product-page-btn">
+                    Tạo danh mục
+                </button>
             </div>
+            <Heading title="Tất cả danh mục" />
             <div className='table-container' style={{ height: "520px" }}>
                 <table className='table table-hover table-bordered align-middle'>
                     <thead>
