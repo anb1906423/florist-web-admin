@@ -7,51 +7,7 @@ import axios from 'axios'
 import Header from '@/components/Header';
 import Heading from '@/components/Heading';
 import OrderRow from '@/components/OrderManagementPage/OrderRow';
-
-// let fakeOrderList = [
-//     {
-//         order_id: "71852912157786",
-//         state_id: 1,
-//         state_name: "Chờ Xác Nhận",
-//         created_at: "2023-03-04T03:50:21.000Z",
-//         total_order_value: 13450000
-//     },
-//     {
-//         order_id: "71852912157786",
-//         state_id: 2,
-//         state_name: "Đã Xác Nhận",
-//         created_at: "2023-03-04T03:50:21.000Z",
-//         total_order_value: 13450000
-//     },
-//     {
-//         order_id: "71852912157786",
-//         state_id: 3,
-//         state_name: "Đang Vận Chuyển",
-//         created_at: "2023-03-04T03:50:21.000Z",
-//         total_order_value: 13450000
-//     },
-//     {
-//         order_id: "71852912157786",
-//         state_id: 4,
-//         state_name: "Đã Giao",
-//         created_at: "2023-03-04T03:50:21.000Z",
-//         total_order_value: 13450000
-//     },
-//     {
-//         order_id: "71852912157786",
-//         state_id: 5,
-//         state_name: "Đã Hủy",
-//         created_at: "2023-03-04T03:50:21.000Z",
-//         total_order_value: 13450000
-//     },
-//     {
-//         order_id: "71852912157786",
-//         state_id: 6,
-//         state_name: "Hủy Bởi Shop",
-//         created_at: "2023-03-04T03:50:21.000Z",
-//         total_order_value: 13450000
-//     },
-// ];
+import { homeAPI } from '@/config';
 
 const OrderManagementPage = () => {
     let [orderList, setOrderList] = useState([]);
@@ -60,8 +16,8 @@ const OrderManagementPage = () => {
     useEffect(() => {
         const getOrderList = async () => {
             try {
-                const result = await axios.get('http://localhost:8080/api/order/admin/list')
-                setOrderList(result.data)
+                const result = await axios.get(homeAPI + '/order/list')
+                setOrderList(result.data.orders)
             } catch (err) {
                 console.log(err);
                 // setOrderList(fakeOrderList);
@@ -70,10 +26,12 @@ const OrderManagementPage = () => {
         getOrderList();
     }, [])
 
+    console.log(orderList)
+
     const refreshOrderTable = async () => {
         try {
-            const result = await axios.get('http://localhost:8080/api/order/admin/list')
-            setOrderList(result.data)
+            const result = await axios.get(homeAPI + '/order/list')
+            setOrderList(result.data.orders)
         } catch (err) {
             console.log(err);
             setOrderList(fakeOrderList);
@@ -86,15 +44,16 @@ const OrderManagementPage = () => {
             <div className="wrapper manager-box">
                 <Heading title="Tất cả đơn hàng" />
                 <div className="wrapper-product-admin table-responsive">
-                    <table className='table order-manage-table w-100'>
+                    <table className='table order-manage-table w-100 align-middle'>
                         <thead className="w-100 align-middle text-center">
                             <tr className="fs-6 w-100">
                                 <th title='Mã đơn hàng' className="col-order-id">
-                                    Mã đơn hàng
+                                    Khách hàng
                                 </th>
-                                <th title='Trạng thái' className="col-state">Trạng thái</th>
-                                <th title="Ngày tạo" className="col-create-at">Ngày tạo</th>
+                                <th title="Ngày tạo" className="col-create-at">Ngày mua</th>
                                 <th title='Tổng giá trị' className="col-total-value">Tổng giá trị</th>
+                                {/* <th title='Thanh toán' className="col-total-value">Thanh toán</th> */}
+                                <th title="Thao tác" className="col-action manipulation">Thanh toán</th>
                                 <th title="Thao tác" className="col-action manipulation">Thao tác</th>
                             </tr>
                         </thead>
@@ -105,11 +64,13 @@ const OrderManagementPage = () => {
                                 return (
                                     <OrderRow
                                         key={index}
-                                        order_id={order.order_id}
-                                        state_id={order.state_id}
-                                        state_name={order.state_name}
+                                        customerName={order.customerName}
+                                        order_id={order.id}
+                                        // state_id={order.state_id}
+                                        state_name={order.state}
+                                        isPaid={order.isPaid}
                                         created_at={order.created_at}
-                                        total_order_value={order.total_order_value}
+                                        total_order_value={order.total}
                                         refreshOrderTable={refreshOrderTable}
                                     />
                                 );

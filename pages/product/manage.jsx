@@ -8,16 +8,19 @@ import Heading from '@/components/Heading'
 import ProductAdmin from '@/components/ProductManagementPage/ProductAdmin'
 import Router from 'next/router'
 import { homeAPI } from '@/config';
+import Loading from '@/components/Loading';
 
 import * as actions from '../../store/actions';
 
 const ProductManagementPage = () => {
+    const [isLoading, setIsLoading] = useState(false);
     let [listProductVariant, setListProductVariant] = useState([]);
     const dispatch = useDispatch();
 
     useEffect(() => {
         const getListProductVariant = async () => {
             try {
+                setIsLoading(true);
                 const result = await axios.get(homeAPI + '/product/get-all')
                 setListProductVariant(result.data.products)
                 console.log(result.data)
@@ -27,6 +30,7 @@ const ProductManagementPage = () => {
             }
         }
         getListProductVariant();
+        setIsLoading(false);
     }, [])
 
     const refreshProductVariantTable = async () => {

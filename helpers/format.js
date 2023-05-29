@@ -1,4 +1,11 @@
-export const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+export const formatPrice = (price) => {
+    const numericPrice = parseFloat(price); // Chuyển chuỗi thành số
+    if (isNaN(numericPrice)) {
+        return price; // Trả về nguyên chuỗi nếu không thể chuyển đổi thành số
+    }
+    const formattedPrice = numericPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return formattedPrice; // Trả về chuỗi đã được định dạng
+};
 
 export const formatRate = (rate) => {
     if (Number.isInteger(rate))

@@ -70,7 +70,9 @@ const detail = () => {
               </tr>
               <tr className='total fw-bold'>
                 <td colSpan="3" className=''>Tổng thanh toán</td>
-                <td colSpan="1">{orderDetail.total_order_value} đ</td>
+                <td colSpan="1">
+                  {orderDetail.total_order_value} đ
+                </td>
               </tr>
             </tfoot>
           </table>
@@ -78,24 +80,6 @@ const detail = () => {
       </div>
       <div className="footer-order-detail-page">
         <div className="row">
-          <div className="col-6">
-            <div>
-              <p className="fw-bold heading_order_histories">Lịch sử đơn hàng</p>
-            </div>
-            <div>
-              <ul>
-                {
-                  orderDetail.order_histories && orderDetail.order_histories.map((item, index) => {
-                    return (
-                      <li key={index}>
-                        {`${formatAllInDate(item.created_at)}: ${item.state_name}`}
-                      </li>
-                    )
-                  })
-                }
-              </ul>
-            </div>
-          </div>
           <div className="col-6">
             <div>
               <p className="fw-bold heading-detail-page">Thông tin khách hàng</p>

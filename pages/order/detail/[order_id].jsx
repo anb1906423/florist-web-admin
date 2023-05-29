@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import Loading from '@/components/Loading'
 import { formatTime, formatPrice, formatAllInDate } from '@/helpers/format'
 import { homeAPI } from '@/config'
+import Router from 'next/router'
 
 const OrderDetailPage = () => {
 	const router = useRouter()
@@ -14,12 +15,13 @@ const OrderDetailPage = () => {
 	const [orderDetail, setOrderDetail] = useState('')
 	const [isLoading, setIsLoading] = useState(false);
 
+
 	useEffect(() => {
 		const getOrderItem = async () => {
 			try {
 				setIsLoading(true)
-				const result = await axios.get(homeAPI + `/order/admin/detail/${id_order}`)
-				setOrderDetail(result.data);
+				const result = await axios.get(homeAPI + `/order/detail/${id_order}`)
+				setOrderDetail(result.data.order);
 				setIsLoading(false)
 			} catch (err) {
 				console.log(err)
@@ -31,12 +33,30 @@ const OrderDetailPage = () => {
 		if (id_order) getOrderItem()
 	}, [])
 
+	const getTempValue = (price, quantity) => {
+		return price * quantity
+	}
+
+	function getTotal(total, deliveryCharges) {
+		var num1 = parseFloat(total); // Chuyển chuỗi thành số
+		var num2 = parseFloat(deliveryCharges); // Chuyển chuỗi thành số
+
+		if (isNaN(num1) || isNaN(num2)) {
+			// Kiểm tra nếu không thể chuyển đổi chuỗi thành số
+			return "Invalid input"; // Hoặc giá trị bạn mong muốn khi đầu vào không hợp lệ
+		}
+
+		var sum = num1 + num2; // Thực hiện phép cộng hai số
+
+		return sum.toString(); // Chuyển kết quả thành chuỗi và trả về
+	}
+
 	return (
 		<div className="order-detail-page">
 			<Header />
 			<div className="header-order-detail-page">
 				<p className="fw-bold" style={{ fontSize: "20px" }}>
-					Đơn hàng #{orderDetail.order_id}
+					Đơn hàng #{orderDetail.id}
 				</p>
 				<p className="">
 					Ngày đặt hàng {formatTime(orderDetail.created_at)}
@@ -58,13 +78,14 @@ const OrderDetailPage = () => {
 						</thead>
 						<tbody>
 							{
-								orderDetail.order_items && orderDetail.order_items.map((item, index) => {
+								orderDetail.items && orderDetail.items.map((item, index) => {
 									return (
 										<tr key={index}>
-											<td>{item.name}</td>
+											<td>{item.productName}</td>
+											{/* <td>{formatPrice(item.price)} đ</td> */}
 											<td>{formatPrice(item.price)} đ</td>
-											<td>{item.quantity}</td>
-											<td>{formatPrice(item.total_value)} đ</td>
+											<td>x {item.quantity}</td>
+											<td>{formatPrice(getTempValue(item.price, item.quantity))} đ</td>
 										</tr>
 									)
 								})
@@ -73,15 +94,19 @@ const OrderDetailPage = () => {
 						<tfoot>
 							<tr className=''>
 								<td colSpan="3" className=''>Tổng giá trị sản phẩm</td>
-								<td colSpan="1">{orderDetail.total_product_value} đ</td>
+								<td colSpan="1">{formatPrice(orderDetail.total)} đ</td>
 							</tr>
 							<tr className=''>
 								<td colSpan="3" className=''>Phí giao hàng</td>
-								<td colSpan="1">{orderDetail.delivery_charges} đ</td>
+								<td colSpan="1">{formatPrice(orderDetail.deliveryCharges)} đ</td>
 							</tr>
 							<tr className='total fw-bold'>
 								<td colSpan="3" className=''>Tổng thanh toán</td>
-								<td colSpan="1">{orderDetail.total_order_value} đ</td>
+								<td colSpan="1">
+									{formatPrice(getTotal(orderDetail.total, orderDetail.deliveryCharges))} đ
+									&nbsp;
+									{orderDetail.isPaid ? <p><i>Đã thanh toán</i></p> : <p><i>Chưa thanh toán</i></p> }
+								</td>
 							</tr>
 						</tfoot>
 					</table>
@@ -91,35 +116,17 @@ const OrderDetailPage = () => {
 				<div className="row">
 					<div className="col-6">
 						<div>
-							<p className="fw-bold heading_order_histories">Lịch sử đơn hàng</p>
-						</div>
-						<div>
-							<ul>
-								{
-									orderDetail.order_histories && orderDetail.order_histories.map((item, index) => {
-										return (
-											<li key={index}>
-												{`${formatAllInDate(item.created_at)}: ${item.state_name}`}
-											</li>
-										)
-									})
-								}
-							</ul>
-						</div>
-					</div>
-					<div className="col-6">
-						<div>
 							<p className="fw-bold heading-detail-page">Thông tin khách hàng</p>
 						</div>
 						<div>
-							<table className=''>
+							<table className='w-100'>
 								<tbody>
 									<tr className='row'>
 										<td className="col-4">
 											Họ tên
 										</td>
 										<td className="col-8 fw-bold d-flex justify-content-end text-end">
-											{orderDetail.customer_name}
+											{orderDetail.customerName}
 										</td>
 									</tr>
 									<tr className='row'>
@@ -135,7 +142,7 @@ const OrderDetailPage = () => {
 											Số điện thoại
 										</td>
 										<td className="col-8 fw-bold d-flex justify-content-end text-end">
-											{orderDetail.phone_number}
+											{orderDetail.phoneNumber}
 										</td>
 									</tr>
 									<tr className='row'>
