@@ -19,8 +19,21 @@ export const convertTime = (created_at) => {
 export function getPathAfterPublic(fullPath) {
     const publicIndex = fullPath.indexOf("public");
     if (publicIndex !== -1) {
-      return fullPath.substring(publicIndex + 6);
+        return fullPath.substring(publicIndex + 6);
     }
     return fullPath;
-  }
-  
+}
+
+export function getTotal(total, deliveryCharges) {
+    var num1 = parseFloat(total); // Chuyển chuỗi thành số
+    var num2 = parseFloat(deliveryCharges); // Chuyển chuỗi thành số
+
+    if (isNaN(num1) || isNaN(num2)) {
+        // Kiểm tra nếu không thể chuyển đổi chuỗi thành số
+        return "Invalid input"; // Hoặc giá trị bạn mong muốn khi đầu vào không hợp lệ
+    }
+
+    var sum = num1 + num2; // Thực hiện phép cộng hai số
+
+    return sum.toString(); // Chuyển kết quả thành chuỗi và trả về
+}

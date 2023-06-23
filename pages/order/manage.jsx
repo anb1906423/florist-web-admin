@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import Heading from '@/components/Heading';
 import OrderRow from '@/components/OrderManagementPage/OrderRow';
 import { homeAPI } from '@/config';
+import { getTotal } from '@/service/func'
 
 const OrderManagementPage = () => {
     let [orderList, setOrderList] = useState([]);
@@ -70,7 +71,7 @@ const OrderManagementPage = () => {
                                         state_name={order.state}
                                         isPaid={order.isPaid}
                                         created_at={order.created_at}
-                                        total_order_value={order.total}
+                                        total_order_value={getTotal(order.total, order.deliveryCharges)}
                                         refreshOrderTable={refreshOrderTable}
                                     />
                                 );

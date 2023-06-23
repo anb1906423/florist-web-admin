@@ -7,6 +7,7 @@ import Loading from '@/components/Loading'
 import { formatTime, formatPrice, formatAllInDate } from '@/helpers/format'
 import { homeAPI } from '@/config'
 import Router from 'next/router'
+import { getTotal } from '@/service/func'
 
 const OrderDetailPage = () => {
 	const router = useRouter()
@@ -23,6 +24,7 @@ const OrderDetailPage = () => {
 				const result = await axios.get(homeAPI + `/order/detail/${id_order}`)
 				setOrderDetail(result.data.order);
 				setIsLoading(false)
+				console.log(result);
 			} catch (err) {
 				console.log(err)
 				setIsLoading(false)
@@ -35,20 +37,6 @@ const OrderDetailPage = () => {
 
 	const getTempValue = (price, quantity) => {
 		return price * quantity
-	}
-
-	function getTotal(total, deliveryCharges) {
-		var num1 = parseFloat(total); // Chuyển chuỗi thành số
-		var num2 = parseFloat(deliveryCharges); // Chuyển chuỗi thành số
-
-		if (isNaN(num1) || isNaN(num2)) {
-			// Kiểm tra nếu không thể chuyển đổi chuỗi thành số
-			return "Invalid input"; // Hoặc giá trị bạn mong muốn khi đầu vào không hợp lệ
-		}
-
-		var sum = num1 + num2; // Thực hiện phép cộng hai số
-
-		return sum.toString(); // Chuyển kết quả thành chuỗi và trả về
 	}
 
 	return (
